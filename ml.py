@@ -52,7 +52,7 @@ X_test_scaled = scl.transform(X_test)
 
 
 ################################### EXPLORATORY DATA ANALYSIS ############################################################################
-#Histograms of specific features
+#Histograms of all the features
 labels = []
 for label in X.columns:
     labels.append(label)
