@@ -19,7 +19,7 @@ SEED=np.random.randint(0,10e7)
 print(f"SEED: {SEED}")
 random_state = SEED
 
-df = pd.read_csv(r'c:\Users\user\Desktop\Machine Learning\datasets\breast-cancer.csv')
+df = pd.read_csv(r'./datasets/breast-cancer.csv')
 print(df.shape)
 
 #are thery are NaN or null values in the data set? If yes, extract them 
@@ -80,38 +80,36 @@ sns.heatmap(p_corr ,cmap= 'crest' , linewidths=0.1 , linecolor='b' , xticklabels
 plt.title("Correlation heatmap for the dataset features")
 plt.show()
 
-###################################### DATA ANALYSIS/MODELING ##################################################################
+##################################### DATA ANALYSIS/MODELING ##################################################################
+
+#KNN classifier 
+#Form a pipeline (feature selection inside GridSearch)
+
+params ={'feature_selection__k': [10, 15, 20,25,30],  # How many features to select
+    'classifier__n_neighbors': [10, 15, 20, 25, 30],          # KNN neighbors
+    'classifier__weights': ['uniform', 'distance'],            # KNN weights
+    'classifier__metric': ['minkowski'],                       # KNN metric
+    'classifier__p': [1, 2]}                                    # p=1-> ManHattan , p=2->Euclidean
+
+#Pipeline of feature selection for the KNN classifier
+pipeline = Pipeline([('feature_selection' , SelectKBest(score_func=f_classif)) , ('classifier' ,KNeighborsClassifier())])
+
+#Gridsearch to slect the best features and best hyperparams for the model
+grid_search = GridSearchCV(pipeline , param_grid=params , cv = KFold(n_splits=5 , shuffle=True,random_state=random_state) , scoring='accuracy' , verbose=1)
+grid_search.fit(X_train_scaled , y_train)
+grid_pred = grid_search.predict(X_test_scaled)
 
 
+print("Best parameters:", grid_search.best_params_)
+print("Best CV score:", grid_search.best_score_)
 
-# #KNN classifier 
-# #Form a pipeline (feature selection inside GridSearch)
+#Get the selected features
+best_model = grid_search.best_estimator_
+feature_selector = best_model.named_steps['feature_selection']
+selected_features = X.columns[feature_selector.get_support()]
+print("Selected features:", list(selected_features))
 
-# params ={'feature_selection__k': [10, 15, 20,25,30],  # How many features to select
-#     'classifier__n_neighbors': [10, 15, 20, 25, 30],          # KNN neighbors
-#     'classifier__weights': ['uniform', 'distance'],            # KNN weights
-#     'classifier__metric': ['minkowski'],                       # KNN metric
-#     'classifier__p': [1, 2]}                                    # p=1-> ManHattan , p=2->Euclidean
-
-# #Pipeline of feature selection for the KNN classifier
-# pipeline = Pipeline([('feature_selection' , SelectKBest(score_func=f_classif)) , ('classifier' ,KNeighborsClassifier())])
-
-# #Gridsearch to slect the best features and best hyperparams for the model
-# grid_search = GridSearchCV(pipeline , param_grid=params , cv = KFold(n_splits=5 , shuffle=True,random_state=random_state) , scoring='accuracy' , verbose=1)
-# grid_search.fit(X_train_scaled , y_train)
-# grid_pred = grid_search.predict(X_test_scaled)
-
-
-# print("Best parameters:", grid_search.best_params_)
-# print("Best CV score:", grid_search.best_score_)
-
-# #Get the selected features
-# best_model = grid_search.best_estimator_
-# feature_selector = best_model.named_steps['feature_selection']
-# selected_features = X.columns[feature_selector.get_support()]
-# print("Selected features:", list(selected_features))
-
-# # Get classifier parameters:
-# classifier = best_model.named_steps['classifier'] 
-# print(f"KNN: n_neighbors={classifier.n_neighbors}, weights={classifier.weights} , metric:{classifier.metric} , p:{classifier.p}")
+# Get classifier parameters:
+classifier = best_model.named_steps['classifier'] 
+print(f"KNN: n_neighbors={classifier.n_neighbors}, weights={classifier.weights} , metric:{classifier.metric} , p:{classifier.p}")
 
