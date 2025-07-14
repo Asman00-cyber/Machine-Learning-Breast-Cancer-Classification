@@ -43,43 +43,43 @@ y = df.iloc[: , 0]
 le = LabelEncoder()
 y=le.fit_transform(y)
 
-# #Histograms of all the features
-# labels = []
-# for label in X.columns:
-#     labels.append(label)
+#Histograms of all the features
+labels = []
+for label in X.columns:
+    labels.append(label)
 
-# def plot_hist(X , bins):
-#     fig , axes = plt.subplots(5,6 , figsize=(15,15))
-#     axes =axes.flatten()
-#     for i, label in enumerate(labels):
-#         axes[i].hist(X[label] , bins =bins , edgecolor ='black')
-#         axes[i].set_xlabel("Value")
-#         axes[i].set_ylabel(f"Count {label} ")
+def plot_hist(X , bins):
+    fig , axes = plt.subplots(5,6 , figsize=(15,15))
+    axes =axes.flatten()
+    for i, label in enumerate(labels):
+        axes[i].hist(X[label] , bins =bins , edgecolor ='black')
+        axes[i].set_xlabel("Value")
+        axes[i].set_ylabel(f"Count {label} ")
         
-#     plt.tight_layout()
-#     plt.show()
-# plot_hist(X,30)
+    plt.tight_layout()
+    plt.show()
+plot_hist(X,30)
 
-# #Plot boxplots for each feature
+#Plot boxplots for each feature
 
-# def box_plot(X):
-#     fig , axes = plt.subplots(5,6 , figsize = (15,15))
-#     axes = axes.flatten()
-#     for i, label in enumerate(labels):
-#         axes[i].boxplot(X[label] ,orientation = 'vertical' , notch = False )
-#         axes[i].set_title(f"{label}")
-#     plt.tight_layout()
-#     plt.show()
-# box_plot(X)
+def box_plot(X):
+    fig , axes = plt.subplots(5,6 , figsize = (15,15))
+    axes = axes.flatten()
+    for i, label in enumerate(labels):
+        axes[i].boxplot(X[label] ,orientation = 'vertical' , notch = False )
+        axes[i].set_title(f"{label}")
+    plt.tight_layout()
+    plt.show()
+box_plot(X)
 
     
-# #Correlation Heatmap for all the features of the dataset
-# p_corr = X.corr()
+#Correlation Heatmap for all the features of the dataset
+p_corr = X.corr()
 
-# plt.figure(figsize=(8,8))
-# sns.heatmap(p_corr ,cmap= 'crest' , linewidths=0.1 , linecolor='b' , xticklabels=True , yticklabels=True)
-# plt.title("Correlation heatmap for the dataset features")
-# plt.show()
+plt.figure(figsize=(8,8))
+sns.heatmap(p_corr ,cmap= 'crest' , linewidths=0.1 , linecolor='b' , xticklabels=True , yticklabels=True)
+plt.title("Correlation heatmap for the dataset features")
+plt.show()
 
 
 #Split the X and y into train and test subsets for furhter analysis
