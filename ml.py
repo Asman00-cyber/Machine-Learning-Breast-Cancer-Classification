@@ -10,15 +10,15 @@ from sklearn import linear_model
 from sklearn.feature_selection import SelectKBest , f_classif
 from sklearn.decomposition import PCA
 from matplotlib.colors import ListedColormap
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import ConfusionMatrixDisplay ,confusion_matrix , accuracy_score , precision_score , recall_score , f1_score
 import seaborn as sns
 import pandas as pd
 import random
 
 ###################################### DATA LOAD/PREPARATION/EDA ###############################################################
-SEED=np.random.randint(0,10e7)
-print(f"SEED: {SEED}")
-random_state = SEED
+# SEED=np.random.randint(0,10e7)
+# print(f"SEED: {SEED}")
+random_state = 22457458
 
 df = pd.read_csv(r'./datasets/breast-cancer.csv')
 print(df.shape)
@@ -95,6 +95,7 @@ X_test_scaled = scl.transform(X_test)
 ##################################### DATA ANALYSIS/MODELING ##################################################################
 
 #On this part i will use different models to see which one has the best accuracy for this dataset
+
 #KNN classifier 
 
 #Form a pipeline (feature selection using KBest)
@@ -123,10 +124,52 @@ X_test_selected = pipe1.named_steps['feature selection'].transform(X_test_scaled
 print(f"Shape of the X_train_selected:{X_train_selected.shape}")
 print(f"Shape of the X_test_selected:{X_test_selected.shape}")
 
+
+#Function that returns the confusion matrix of the KNN model
+def get_confussion_matrix(y_test=y_test):
+    y_pred =pipe1.named_steps['Classifier'].predict(X_test_selected)
+    confusion_matr = confusion_matrix(y_test , y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=confusion_matr )
+    disp.plot()
+    plt.title("Confussion Matrix for KNN model")
+    plt.show()
+get_confussion_matrix()
+
+
+#Function that returns the confusion matrix metrics for the KNN model
+def get_confusion_metrics(y_test=y_test):
+    y_pred = pipe1.named_steps["Classifier"].predict(X_test_selected)
+    accuracy_knn = accuracy_score(y_test ,y_pred)
+    precision_knn = precision_score(y_test , y_pred)
+    recall_knn = recall_score(y_test , y_pred)
+    f1_score_knn = f1_score(y_test , y_pred)
+    labels = ["Accuracy KNN" , "Precision KNN" , "Recal KNN" , "F1-score KNN"]
+    metrics = [accuracy_knn ,precision_knn ,recall_knn , f1_score_knn]
+    colors = ['red', 'blue' , 'green' , 'violet']
+    fig , axes = plt.subplots(1,4 ,figsize = (8,8))
+    axes =axes.flatten()
+    axes[0].set_title("Confussion Matrix metrics for KNN")
+    for i in range(len(labels)):
+        axes[i].bar(labels[i] ,metrics[i] , color = colors[i])
+
+    plt.tight_layout()
+    plt.show()
+get_confusion_metrics()
+
+#print out the training accuracy and the test accuracy on the terminal for the KNN model
 training_accuracy = pipe1.named_steps["Classifier"].score(X_train_selected , y_train)
 test_accuracy = pipe1.named_steps["Classifier"].score(X_test_selected , y_test)
 print(f"Training accuracy:{training_accuracy}")
 print(f"Testing accuracy:{test_accuracy}")
+    
+    
+
+
+
+
+
+
+
 
 
 
