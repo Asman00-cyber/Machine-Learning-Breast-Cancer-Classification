@@ -119,6 +119,10 @@ print(f"Best features selected for KNN model:{best_features}")
 X_train_selected = pipe1.named_steps['feature selection'].transform(X_train_scaled)  
 X_test_selected = pipe1.named_steps['feature selection'].transform(X_test_scaled) 
 
+#print the shape of the X_train_selected and X_test selected for debugging purposes
+print(f"Shape of the X_train_selected:{X_train_selected.shape}")
+print(f"Shape of the X_test_selected:{X_test_selected.shape}")
+
 training_accuracy = pipe1.named_steps["Classifier"].score(X_train_selected , y_train)
 test_accuracy = pipe1.named_steps["Classifier"].score(X_test_selected , y_test)
 print(f"Training accuracy:{training_accuracy}")
