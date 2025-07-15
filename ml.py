@@ -99,6 +99,9 @@ X_test_scaled = scl.transform(X_test)
 #KNN classifier 
 
 #Form a pipeline (feature selection using KBest)
+#In this case i have 569 samples and 31 features. By the rule of thumb 569samples/31 features = 18 samples per feature. This means i have
+#high risk of overfitting if i DONT apply feature selection. By increasing the samples per feature i reduce the overfitting, thats why 
+#i chose to reduce the features to do the analysis!
 
 pipe1 = Pipeline(steps=[
     ("feature selection", SelectKBest(score_func=f_classif , k=20)),
